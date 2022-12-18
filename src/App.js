@@ -1,31 +1,53 @@
 import { useState } from 'react';
 import './App.css';
 
-const ClickedProps = [{
-  clientX: 0,
-  clientY: 0
-}]
-
 function App() {
-  const [ clickedPoints, setClickedPoints ] = useState(ClickedProps)
+  const [ clickedCoords, setClickedCoords ] = useState([])
+  const [ undoDots, setUndoDots ] = useState([])
   
   function getCoordinates(event) {
     const { clientX, clientY } = event
-  
-    setClickedPoints([...clickedPoints, { clientX, clientY }])
+    
+    setUndoDots([])    
+    setClickedCoords([...clickedCoords, { clientX, clientY }])
+  }
+
+  function undoDot() {
+    const newClickedCoords = [...clickedCoords]
+    const undoDot = newClickedCoords.pop()
+
+    if (!undoDots) return
+
+    setClickedCoords(newClickedCoords)
+    setUndoDots([...undoDots, undoDot])
+  }
+
+  function redoDot() {
+    const newUndoDots = [...undoDots]
+    const redoDotLast = newUndoDots.pop()
+    
+    if (!redoDotLast) return
+
+    setUndoDots(newUndoDots)
+    setClickedCoords([...clickedCoords, redoDotLast])
   }
 
   return (
-    <div className="App" onClick={ getCoordinates }>
-      {clickedPoints.map( (clickedPoint, index) => {
-        return (
-          <div key={ index } className='redDot' style={{
-            left: clickedPoint.clientX - 6,
-            top: clickedPoint.clientY - 7
-          }}></div>
-        )
-      })}
-    </div>
+    <>
+      <button disabled={ clickedCoords.length === 0 } className='undoDot' onClick={ undoDot }>Undo</button>
+      <button disabled={ undoDots.length === 0 } className='redoDot' onClick={ redoDot }>Redo</button>
+      <div className="App" onClick={ getCoordinates }>
+        {clickedCoords.map( (clickedPoint, index) => {
+          return (
+            <div key={ index } className='redDot' style={{
+              left: clickedPoint.clientX - 6,
+              top: clickedPoint.clientY - 7
+            }}></div>
+          )
+        })}
+      </div>
+    </>
+    
   );
 }
 
