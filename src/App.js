@@ -16,10 +16,10 @@ function App() {
   }
 
   return (
-    <div className="App" onClick={getCoordinates}>
-      {clickedPoints.map( (clickedPoint) => {
+    <div className="App" onClick={ getCoordinates }>
+      {clickedPoints.map( (clickedPoint, index) => {
         return (
-          <div className='redDot' style={{
+          <div key={ index } className='redDot' style={{
             left: clickedPoint.clientX - 6,
             top: clickedPoint.clientY - 7
           }}></div>
